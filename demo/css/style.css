@@ -1247,6 +1247,26 @@ textarea:focus {
   width: 94%;
 }
 
+/* --- Boat Tracks --- */
+.boat-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.boat-track--left { left: calc(3% - 25px); }
+.boat-track--right { right: calc(3% - 25px); }
+
+/* Hide on smaller screens */
+@media (max-width: 1400px) {
+  .boat-track { display: none; }
+}
+
 /* --- Scroll-Driven Boat Animation --- */
 .scroll-boat {
   position: absolute;
