@@ -23,7 +23,7 @@ const srcDir = path.join(DEMO, 'src');
 const partials = [
   '_head.html', '_nav.html', '_hero.html', '_about.html',
   '_expertise.html', '_reviews.html', '_projects.html',
-  '_badges.html', '_serving.html', '_map.html',
+  '_serving.html', '_map.html',
   '_footer.html', '_scripts.html',
 ];
 
