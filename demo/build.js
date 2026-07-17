@@ -35,16 +35,21 @@ const html = partials
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
 
-fs.writeFileSync(path.join(DIST, 'index.html'), html);
+// Root index.html = coming soon page
+fs.copyFileSync(path.join(ROOT, 'index.html'), path.join(DIST, 'index.html'));
 
-// Preserve /demo/ path prefix in dist/
+// Demo site goes under /demo/
 fs.mkdirSync(path.join(DIST, 'demo'));
+fs.writeFileSync(path.join(DIST, 'demo', 'index.html'), html);
 copyDir(path.join(DEMO, 'images'), path.join(DIST, 'demo', 'images'));
 copyDir(path.join(DEMO, 'css'),    path.join(DIST, 'demo', 'css'));
 copyDir(path.join(DEMO, 'js'),     path.join(DIST, 'demo', 'js'));
 
-// Root-level assets (favicon, logo, video)
+// Root-level assets (favicon, logo, video, bg)
 const rootAssets = ['assets'];
+if (fs.existsSync(path.join(ROOT, 'bg.jpg'))) {
+  fs.copyFileSync(path.join(ROOT, 'bg.jpg'), path.join(DIST, 'bg.jpg'));
+}
 if (fs.existsSync(path.join(ROOT, 'hero-section-video.mp4'))) {
   fs.copyFileSync(
     path.join(ROOT, 'hero-section-video.mp4'),
@@ -57,8 +62,5 @@ for (const dir of rootAssets) {
     copyDir(srcPath, path.join(DIST, dir));
   }
 }
-
-// Also copy demo/index.html so /demo/ resolves from root
-fs.copyFileSync(path.join(DIST, 'index.html'), path.join(DIST, 'demo', 'index.html'));
 
 console.log('Built dist/');
