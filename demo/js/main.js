@@ -199,3 +199,59 @@
   });
 
 })();
+
+  /* --- Boat Scroll Animation --- */
+  const projectsSection = document.getElementById('projects');
+  const boatLeft = document.querySelector('.scroll-boat--left');
+  const boatRight = document.querySelector('.scroll-boat--right');
+  
+  if (projectsSection && boatLeft && boatRight) {
+    let ticking = false;
+
+    function updateBoats() {
+      const rect = projectsSection.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate how far the section has scrolled through the viewport
+      // 0 = just entered viewport, 1 = just left viewport
+      let progress = (windowHeight - rect.top) / (windowHeight + rect.height);
+      
+      if (progress >= 0 && progress <= 1) {
+        // Opacity logic: fade in at 5%, fade out at 95%
+        let opacity = 0;
+        if (progress > 0.05 && progress < 0.95) opacity = 1;
+        else if (progress > 0 && progress <= 0.05) opacity = progress / 0.05;
+        else if (progress >= 0.95 && progress < 1) opacity = (1 - progress) / 0.05;
+
+        boatLeft.style.opacity = opacity;
+        boatRight.style.opacity = opacity;
+        
+        // Position Y
+        const topY = progress * 100;
+        boatLeft.style.top = `${topY}%`;
+        boatRight.style.top = `${topY}%`;
+        
+        // Position X (Sine wave)
+        const cycle = progress * Math.PI * 4;
+        const xOffset = Math.sin(cycle) * 40; 
+        
+        // Rotation based on slope
+        const slope = Math.cos(cycle);
+        const rotation = 180 + (slope * -20);
+        
+        boatLeft.style.transform = `translateX(${xOffset}px) rotate(${rotation}deg)`;
+        boatRight.style.transform = `translateX(${-xOffset}px) rotate(${180 - (slope * -20)}deg)`;
+      }
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateBoats);
+        ticking = true;
+      }
+    }, { passive: true });
+    
+    // Initial call
+    updateBoats();
+  }

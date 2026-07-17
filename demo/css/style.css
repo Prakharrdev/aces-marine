@@ -1247,6 +1247,34 @@ textarea:focus {
   width: 94%;
 }
 
+/* --- Scroll-Driven Boat Animation --- */
+.scroll-boat {
+  position: absolute;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  /* Hardware acceleration for smooth JS animation */
+  will-change: transform, top, opacity;
+}
+
+.scroll-boat--left {
+  left: 3%;
+}
+
+.scroll-boat--right {
+  right: 3%;
+}
+
+/* Hide on smaller screens to avoid overlapping content */
+@media (max-width: 1400px) {
+  .scroll-boat {
+    display: none;
+  }
+}
+
 .projects-subtitle {
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
