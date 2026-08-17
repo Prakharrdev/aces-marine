@@ -337,7 +337,7 @@ a {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: url('/demo/images/hero-bg.webp');
+  background-image: url('/images/hero-bg.png');
   background-size: cover;
   background-position: center;
   z-index: 0;
@@ -699,7 +699,7 @@ textarea:focus {
 }
 
 .company-img-col {
-  background: url('/demo/images/about-img.png') no-repeat center center / cover;
+  background: url('/images/about-img.png') no-repeat center center / cover;
   position: absolute;
   top: 0;
   left: 0;
@@ -1468,7 +1468,7 @@ textarea:focus {
    ══════════════════════════════════════════════ */
 .review-sec {
   padding: 260px 0 220px;
-  background-image: linear-gradient(rgba(44, 82, 130, 0.4), rgba(44, 82, 130, 0.4)), url('/demo/images/image-review-section.png');
+  background-image: linear-gradient(rgba(44, 82, 130, 0.4), rgba(44, 82, 130, 0.4)), url('/images/image-review-section.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
