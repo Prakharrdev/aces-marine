@@ -41,61 +41,60 @@
 
     const cards = track.querySelectorAll('.review-card');
     let current = 0;
+    let autoTimer = null;
     let visibleCount = getVisible();
     const total = cards.length;
 
     function getVisible() {
-      if (window.innerWidth < 576) return 1;
-      if (window.innerWidth < 768) return 2;
-      if (window.innerWidth < 1400) return 3;
-      return 6;
-    }
-
-    function getPageCount() {
-      return Math.max(1, total - visibleCount + 1);
-    }
-
-    function getCardStep() {
-      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      return cards[0].getBoundingClientRect().width + gap;
+      return window.innerWidth < 576 ? 1 : window.innerWidth < 992 ? 2 : 3;
     }
 
     function buildDots() {
       visibleCount = getVisible();
       dotsWrap.innerHTML = '';
-      const pages = getPageCount();
+      const pages = total - visibleCount + 1;
       for (let i = 0; i < pages; i++) {
-        const d = document.createElement('button');
+        const d = document.createElement('span');
         d.className = 'review-dot' + (i === current ? ' active' : '');
-        d.type = 'button';
-        d.setAttribute('aria-label', `Show review page ${i + 1}`);
-        d.addEventListener('click', () => goTo(i));
+        d.addEventListener('click', () => { goTo(i); resetAuto(); });
         dotsWrap.appendChild(d);
       }
     }
 
     function goTo(index) {
       visibleCount = getVisible();
-      const pages = getPageCount();
+      const pages = total - visibleCount + 1;
       current = Math.max(0, Math.min(index, pages - 1));
-      track.scrollTo({ left: getCardStep() * current, behavior: 'smooth' });
+      const cardW = cards[0].offsetWidth + 20;
+      track.scrollTo({ left: cardW * current, behavior: 'smooth' });
       dotsWrap.querySelectorAll('.review-dot').forEach((d, i) => d.classList.toggle('active', i === current));
     }
 
-    function next() { goTo(current + 1 < getPageCount() ? current + 1 : 0); }
-    function prev() { goTo(current > 0 ? current - 1 : getPageCount() - 1); }
+    function next() { goTo(current + 1 < total - visibleCount + 1 ? current + 1 : 0); }
+    function prev() { goTo(current > 0 ? current - 1 : total - visibleCount); }
 
-    prevBtn.addEventListener('click', prev);
-    nextBtn.addEventListener('click', next);
+    function startAuto() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(next, 3500);
+    }
+    function resetAuto() { clearInterval(autoTimer); startAuto(); }
+
+    prevBtn.addEventListener('click', () => { prev(); resetAuto(); });
+    nextBtn.addEventListener('click', () => { next(); resetAuto(); });
 
     track.addEventListener('scroll', () => {
-      current = Math.min(Math.round(track.scrollLeft / getCardStep()), getPageCount() - 1);
+      const cardW = cards[0].offsetWidth + 20;
+      current = Math.round(track.scrollLeft / cardW);
       dotsWrap.querySelectorAll('.review-dot').forEach((d, i) => d.classList.toggle('active', i === current));
     });
+
+    track.addEventListener('touchstart', () => clearInterval(autoTimer));
+    track.addEventListener('touchend', startAuto);
 
     window.addEventListener('resize', () => { buildDots(); goTo(0); });
 
     buildDots();
+    startAuto();
   })();
 
   /* ── Projects Carousel ── */
