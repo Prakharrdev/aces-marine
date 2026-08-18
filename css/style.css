@@ -337,7 +337,7 @@ a {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: url('/demo/images/hero-bg.webp');
+  background-image: url('/images/hero-bg.png');
   background-size: cover;
   background-position: center;
   z-index: 0;
@@ -506,7 +506,8 @@ a {
   height: 270px;
   border-radius: var(--radius-full);
   background-color: var(--color-overlay);
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
   margin-bottom: 20px;
   border: 3px solid rgba(255, 255, 255, 0.35);
@@ -698,7 +699,7 @@ textarea:focus {
 }
 
 .company-img-col {
-  background: url('/demo/images/about-img.png') no-repeat center center / cover;
+  background: url('/images/about-img.png') no-repeat center center / cover;
   position: absolute;
   top: 0;
   left: 0;
@@ -921,6 +922,8 @@ textarea:focus {
   width: 48px;
   height: 48px;
   object-fit: contain;
+  /* The supplied logo is white-only; use a dark treatment on this light section. */
+  filter: brightness(0) saturate(100%);
 }
 
 .services-subtitle-text {
@@ -1139,7 +1142,8 @@ textarea:focus {
   top: 56%;
   transform: translateY(-50%);
   width: 250px;
-  opacity: 1; /* Fully visible */
+  opacity: 0.18;
+  filter: brightness(0) saturate(100%);
   z-index: 0;
   pointer-events: none;
 }
@@ -1464,7 +1468,7 @@ textarea:focus {
    ══════════════════════════════════════════════ */
 .review-sec {
   padding: 260px 0 220px;
-  background-image: linear-gradient(rgba(44, 82, 130, 0.4), rgba(44, 82, 130, 0.4)), url('/demo/images/image-review-section.png');
+  background-image: linear-gradient(rgba(44, 82, 130, 0.4), rgba(44, 82, 130, 0.4)), url('/images/image-review-section.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const index = fs.readFileSync('demo/index.html', 'utf-8');
+const index = fs.readFileSync('index.html', 'utf-8');
 
 const markers = [
   { name: '_head.html', startStr: null, endStr: '    <!-- Mobile Topbar -->' },
@@ -29,6 +29,6 @@ for (const m of markers) {
   }
   
   const content = index.substring(startIdx, endIdx);
-  fs.writeFileSync(path.join('demo/src', m.name), content);
+  fs.writeFileSync(path.join('src', m.name), content);
 }
 console.log('Sync complete');

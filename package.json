@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node demo/build.js",
+    "build": "node build.js",
     "dev": "npx serve -p 3001",
     "start": "npx serve -p 3001"
   },

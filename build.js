@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
-const DEMO = __dirname;
+const SRC = path.join(ROOT, 'src');
 
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -19,7 +19,6 @@ function copyDir(src, dest) {
 }
 
 // 1. Build HTML from partials
-const srcDir = path.join(DEMO, 'src');
 const partials = [
   '_head.html', '_nav.html', '_hero.html', '_about.html',
   '_expertise.html', '_reviews.html', '_projects.html',
@@ -28,39 +27,30 @@ const partials = [
 ];
 
 const html = partials
-  .map(file => fs.readFileSync(path.join(srcDir, file), 'utf-8'))
+  .map(file => fs.readFileSync(path.join(SRC, file), 'utf-8'))
   .join('\n');
+
+// Write compiled site to root index.html (dev + committed artifact)
+fs.writeFileSync(path.join(ROOT, 'index.html'), html);
 
 // 2. Assemble dist/
 fs.rmSync(DIST, { recursive: true, force: true });
 fs.mkdirSync(DIST, { recursive: true });
 
-// Root index.html = coming soon page
 fs.copyFileSync(path.join(ROOT, 'index.html'), path.join(DIST, 'index.html'));
 
-// Demo site goes under /demo/
-fs.mkdirSync(path.join(DIST, 'demo'));
-fs.writeFileSync(path.join(DIST, 'demo', 'index.html'), html);
-copyDir(path.join(DEMO, 'images'), path.join(DIST, 'demo', 'images'));
-copyDir(path.join(DEMO, 'css'),    path.join(DIST, 'demo', 'css'));
-copyDir(path.join(DEMO, 'js'),     path.join(DIST, 'demo', 'js'));
-
-// Root-level assets (favicon, logo, video, bg)
-const rootAssets = ['assets'];
-if (fs.existsSync(path.join(ROOT, 'bg.jpg'))) {
-  fs.copyFileSync(path.join(ROOT, 'bg.jpg'), path.join(DIST, 'bg.jpg'));
+for (const dir of ['images', 'css', 'js', 'assets']) {
+  const srcPath = path.join(ROOT, dir);
+  if (fs.existsSync(srcPath)) {
+    copyDir(srcPath, path.join(DIST, dir));
+  }
 }
+
 if (fs.existsSync(path.join(ROOT, 'hero-section-video.mp4'))) {
   fs.copyFileSync(
     path.join(ROOT, 'hero-section-video.mp4'),
     path.join(DIST, 'hero-section-video.mp4')
   );
-}
-for (const dir of rootAssets) {
-  const srcPath = path.join(ROOT, dir);
-  if (fs.existsSync(srcPath)) {
-    copyDir(srcPath, path.join(DIST, dir));
-  }
 }
 
 console.log('Built dist/');
