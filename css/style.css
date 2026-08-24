@@ -590,6 +590,12 @@ a {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
+.estimate-form-msg {
+  font-size: 0.95rem;
+  font-weight: 600;
+  min-height: 22px;
+}
+
 .appointment-pill {
   background: var(--color-accent);
   color: var(--color-white);
