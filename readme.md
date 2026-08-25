@@ -107,14 +107,40 @@ npm run build
 npm run dev
 ```
 
-Then open **http://localhost:3001**.
+Then open **http://localhost:3001**. The local server also serves the `/api/submit` endpoint used by the estimate form (no separate `npx serve` needed).
 
 | Command | What it does |
 | --- | --- |
 | `npm install` | Installs dependencies (run once after cloning) |
 | `npm run build` | Compiles `src/` into `index.html` and `dist/` |
-| `npm run dev` / `npm start` | Serves the site locally on port 3001 |
+| `npm run dev` / `npm start` | Serves the site + `/api/submit` locally on port 3001 |
+| `npm run db:setup` | Creates the `leads` table in Turso (idempotent, safe to re-run) |
 | `node sync-back.js` | Utility: if someone edited `index.html` directly, pull those edits back into `src/` |
+
+---
+
+## Estimate Form & Database
+
+The "Free Estimate" form submits to the `/api/submit` serverless function, which writes leads to a [Turso](https://turso.tech) SQLite database.
+
+### Required environment variables
+
+Create a `.env` file (for local dev) and configure the same values in the Vercel project's environment settings:
+
+| Variable | Description |
+| --- | --- |
+| `TURSO_URL` | Turso database URL (e.g. `libsql://your-db.turso.io`) |
+| `TURSO_AUTH_TOKEN` | Turso database authentication token |
+
+### Create the table
+
+Run the migration once against the database you point `TURSO_URL` at (locally and in production):
+
+```bash
+npm run db:setup
+```
+
+The script is idempotent (`CREATE TABLE IF NOT EXISTS leads`) and never drops data, so it is safe to run on every deploy. The `/api/submit` handler also ensures the table exists on write as a safety net.
 
 ---
 

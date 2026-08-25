@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "build": "node build.js",
-    "dev": "npx serve -p 3001",
-    "start": "npx serve -p 3001"
+    "dev": "node scripts/dev-server.js",
+    "start": "node scripts/dev-server.js",
+    "db:setup": "node scripts/db-setup.js"
   },
-  "devDependencies": {
-    "serve": "^14.2.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "@libsql/client": "^0.17.4"
   }

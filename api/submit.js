@@ -1,12 +1,15 @@
 const { createClient } = require('@libsql/client');
 
-const db = createClient({
-  url: process.env.TURSO_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
-
-const REQUIRE = ['firstName', 'lastName', 'phone', 'email'];
+const REQUIRE = ['firstName', 'lastName', 'phone', 'email', 'zip'];
 const MAX_LEN = { firstName: 40, lastName: 40, phone: 20, email: 80, zip: 12, service: 40, referral: 40, message: 4000 };
+
+let db = null;
+function getDb() {
+  if (db) return db;
+  if (!process.env.TURSO_URL || !process.env.TURSO_AUTH_TOKEN) return null;
+  db = createClient({ url: process.env.TURSO_URL, authToken: process.env.TURSO_AUTH_TOKEN });
+  return db;
+}
 
 function clean(value, key) {
   return String(value == null ? '' : value).trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, MAX_LEN[key]);
@@ -20,10 +23,13 @@ module.exports = async function handler(req, res) {
     }
 
     let body = {};
-    try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch {}
+    try {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    } catch {}
+    if (!body || typeof body !== 'object' || Array.isArray(body)) body = {};
 
     const data = {};
-    for (const key of [...REQUIRE, 'zip', 'service', 'referral', 'message']) {
+    for (const key of [...REQUIRE, 'service', 'referral', 'message']) {
       data[key] = clean(body[key], key);
     }
 
@@ -33,6 +39,26 @@ module.exports = async function handler(req, res) {
     for (const key of REQUIRE) {
       if (!data[key]) return res.status(400).json({ error: `Missing required field: ${key}` });
     }
+
+    const db = getDb();
+    if (!db) {
+      return res.status(500).json({ error: 'Server configuration error: TURSO_URL and TURSO_AUTH_TOKEN must be set' });
+    }
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS leads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        email TEXT NOT NULL,
+        zip TEXT,
+        service TEXT,
+        referral TEXT,
+        message TEXT,
+        created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      )
+    `);
 
     await db.execute({
       sql: `
